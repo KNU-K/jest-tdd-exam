@@ -26,4 +26,38 @@ class UserService {
   }
 }
 
-module.exports = { UserService };
+class ExamUserService {
+  constructor(database) {
+    this.database = database;
+  }
+
+  getUsers() {
+    return new Promise((resolve, reject) => {
+      this.database.query("SELECT * FROM users", (err, result) => {
+        if (!err) {
+          resolve(result);
+        } else {
+          resolve([]);
+        }
+      });
+    });
+  }
+
+  getUserById(userId) {
+    return new Promise((resolve, reject) => {
+      this.database.query(
+        "SELECT * FROM users WHERE id = ?",
+        [userId],
+        (err, result) => {
+          if (!err) {
+            resolve(result);
+          } else {
+            resolve([]);
+          }
+        }
+      );
+    });
+  }
+}
+
+module.exports = { UserService, ExamUserService };

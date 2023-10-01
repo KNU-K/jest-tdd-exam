@@ -1,6 +1,6 @@
 //test
 const request = require("supertest");
-const app = require("../scenario1");
+const app = require("../../scenario1");
 
 describe("register", () => {
   it("exist 유저 구분(중복)", async () => {
