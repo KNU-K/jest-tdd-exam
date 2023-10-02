@@ -46,7 +46,7 @@ class ExamUserService {
   getUserById(userId) {
     return new Promise((resolve, reject) => {
       this.database.query(
-        "SELECT * FROM users WHERE id = ?",
+        "SELECT * FROM users WHERE userid = ?",
         [userId],
         (err, result) => {
           if (!err) {
@@ -60,4 +60,20 @@ class ExamUserService {
   }
 }
 
-module.exports = { UserService, ExamUserService };
+class AuthService {
+  constructor(ExamUserService) {
+    this.userService = ExamUserService;
+  }
+
+  async authenticateUser(user) {
+    const result = await this.userService.getUserById({ userid: user.userid });
+
+    if (result.length) {
+      if (result[0].password === user.password) {
+        return true;
+      }
+    }
+    return false;
+  }
+}
+module.exports = { UserService, ExamUserService, AuthService };

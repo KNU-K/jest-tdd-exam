@@ -3,7 +3,7 @@ const {
   ExamUserService,
   AuthService,
 } = require("../../services/scenario1.service");
-// ë°ì´í„°ë² ì´ìŠ¤ ì—°ê²°ì„ ëª¨í‚¹í•˜ëŠ” ê°€ì§œ ëª¨ë“ˆ
+// µ¥ÀÌÅÍº£ÀÌ½º ¿¬°áÀ» ¸ðÅ·ÇÏ´Â °¡Â¥ ¸ðµâ
 class MockDatabase {
   constructor() {
     this.userSchema = [
@@ -15,15 +15,15 @@ class MockDatabase {
   }
 
   async query(query, params = undefined, callback) {
-    // ì—¬ê¸°ì—ì„œ ì‹¤ì œ ë°ì´í„°ë² ì´ìŠ¤ ì—°ê²°ì„ ëŒ€ì‹ í•˜ì—¬ ê°€ì§œ ë°ì´í„°ë¥¼ ë°˜í™˜í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤.
-    // ì´ ì˜ˆì œì—ì„œëŠ” ê°„ë‹¨í•˜ê²Œ ê°€ì§œ ë°ì´í„°ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
+    // ¿©±â¿¡¼­ ½ÇÁ¦ µ¥ÀÌÅÍº£ÀÌ½º ¿¬°áÀ» ´ë½ÅÇÏ¿© °¡Â¥ µ¥ÀÌÅÍ¸¦ ¹ÝÈ¯ÇÒ ¼ö ÀÖ½À´Ï´Ù.
+    // ÀÌ ¿¹Á¦¿¡¼­´Â °£´ÜÇÏ°Ô °¡Â¥ µ¥ÀÌÅÍ¸¦ ¹ÝÈ¯ÇÕ´Ï´Ù.
     if (query === "SELECT * FROM users WHERE userid = ?") {
       const userid = params[0].userid;
       const user = this.userSchema.find((e) => e.userid === userid);
       if (user) {
-        return callback(null, [user]); // ìˆ˜ì •: ë°ì´í„°ë¥¼ ë°°ì—´ì— ë„£ì–´ ë°˜í™˜
+        return callback(null, [user]); // ¼öÁ¤: µ¥ÀÌÅÍ¸¦ ¹è¿­¿¡ ³Ö¾î ¹ÝÈ¯
       } else {
-        return callback(null, []); // ì‚¬ìš©ìžê°€ ì¡´ìž¬í•˜ì§€ ì•Šì„ ê²½ìš° ë¹ˆ ë°°ì—´ ë°˜í™˜
+        return callback(null, []); // »ç¿ëÀÚ°¡ Á¸ÀçÇÏÁö ¾ÊÀ» °æ¿ì ºó ¹è¿­ ¹ÝÈ¯
       }
     } else if (query === "SELECT * FROM users") {
       return callback(null, this.userSchema);
@@ -32,10 +32,10 @@ class MockDatabase {
     }
   }
 }
-let examUserService; // UserService ì¸ìŠ¤í„´ìŠ¤
+let examUserService; // UserService ÀÎ½ºÅÏ½º
 let authService;
 beforeEach(() => {
-  // ê° í…ŒìŠ¤íŠ¸ ì¼€ì´ìŠ¤ ì‹¤í–‰ ì „ì— ëª¨í‚¹ëœ ë°ì´í„°ë² ì´ìŠ¤ ê°ì²´ë¥¼ ìƒì„±í•˜ì—¬ UserServiceì— ì£¼ìž…í•©ë‹ˆë‹¤.
+  // °¢ Å×½ºÆ® ÄÉÀÌ½º ½ÇÇà Àü¿¡ ¸ðÅ·µÈ µ¥ÀÌÅÍº£ÀÌ½º °´Ã¼¸¦ »ý¼ºÇÏ¿© UserService¿¡ ÁÖÀÔÇÕ´Ï´Ù.
   const database = new MockDatabase();
   examUserService = new ExamUserService(database);
   authService = new AuthService(examUserService);
@@ -59,5 +59,30 @@ describe("UserService", () => {
     const user = await examUserService.getUserById({ userid: "asd" });
     expect(user).toEqual([]);
   });
-  // 10ì´ˆì˜ ì‹¤í–‰ ì‹œê°„ ì œí•œ
+  // 10ÃÊÀÇ ½ÇÇà ½Ã°£ Á¦ÇÑ
+});
+
+describe("test authService test", () => {
+  test("succeed authenticate User", async () => {
+    const isAuthenticateUser = await authService.authenticateUser({
+      userid: "John",
+      password: "1234",
+    });
+    expect(isAuthenticateUser).toBe(true);
+  });
+
+  test("userid fail", async () => {
+    const isAuthenticateUser = await authService.authenticateUser({
+      userid: "Joh",
+      password: "1234",
+    });
+    expect(isAuthenticateUser).toBe(false);
+  });
+  test("userpw fail", async () => {
+    const isAuthenticateUser = await authService.authenticateUser({
+      userid: "John",
+      password: "124",
+    });
+    expect(isAuthenticateUser).toBe(false);
+  });
 });

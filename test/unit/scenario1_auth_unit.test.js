@@ -40,24 +40,27 @@ beforeEach(() => {
   examUserService = new ExamUserService(database);
   authService = new AuthService(examUserService);
 });
-
-describe("UserService", () => {
-  test("getUsers should return all users", async () => {
-    const users = await examUserService.getUsers();
-    expect(users).toEqual([
-      { id: 1, userid: "John", password: "1234" },
-      { id: 2, userid: "Kim", password: "1234" },
-      { id: 3, userid: "Ahn", password: "1234" },
-    ]);
-  });
-  test("getUserById should return a user if the user exists", async () => {
-    const user = await examUserService.getUserById({ userid: "John" });
-    expect(user).toEqual([{ id: 1, userid: "John", password: "1234" }]);
+describe("test authService test", () => {
+  test("succeed authenticate User", async () => {
+    const isAuthenticateUser = await authService.authenticateUser({
+      userid: "John",
+      password: "1234",
+    });
+    expect(isAuthenticateUser).toBe(true);
   });
 
-  test("getUserById should return an empty array if the user does not exist", async () => {
-    const user = await examUserService.getUserById({ userid: "asd" });
-    expect(user).toEqual([]);
+  test("userid fail", async () => {
+    const isAuthenticateUser = await authService.authenticateUser({
+      userid: "Joh",
+      password: "1234",
+    });
+    expect(isAuthenticateUser).toBe(false);
   });
-  // 10초의 실행 시간 제한
+  test("userpw fail", async () => {
+    const isAuthenticateUser = await authService.authenticateUser({
+      userid: "John",
+      password: "124",
+    });
+    expect(isAuthenticateUser).toBe(false);
+  });
 });
