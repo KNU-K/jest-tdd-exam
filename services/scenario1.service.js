@@ -33,7 +33,7 @@ class ExamUserService {
 
   getUsers() {
     return new Promise((resolve, reject) => {
-      this.database.query("SELECT * FROM users", (err, result) => {
+      this.database.query("SELECT * FROM users", [null], (err, result) => {
         if (!err) {
           resolve(result);
         } else {

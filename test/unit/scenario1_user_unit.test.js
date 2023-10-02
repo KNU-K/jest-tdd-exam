@@ -1,4 +1,3 @@
-//BUG: this code is generated exceed timeout
 // userService.test.js
 const { ExamUserService } = require("../../services/scenario1.service");
 // 데이터베이스 연결을 모킹하는 가짜 모듈
@@ -12,7 +11,7 @@ class MockDatabase {
     this.data = {};
   }
 
-  async query(query, params, callback) {
+  async query(query, params = undefined, callback) {
     // 여기에서 실제 데이터베이스 연결을 대신하여 가짜 데이터를 반환할 수 있습니다.
     // 이 예제에서는 간단하게 가짜 데이터를 반환합니다.
     if (query === "SELECT * FROM users WHERE id = ?") {
@@ -46,7 +45,7 @@ describe("UserService", () => {
       { id: 2, name: "Kim" },
       { id: 3, name: "Ahn" },
     ]);
-  }, 90000);
+  });
   test("getUserById should return a user if the user exists", async () => {
     const user = await examUserService.getUserById({ userid: 1 });
     expect(user).toEqual([{ id: 1, name: "John" }]);
